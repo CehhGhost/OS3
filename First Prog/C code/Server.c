@@ -7,7 +7,7 @@
 #include <arpa/inet.h>
 #include <pthread.h>
 
-#define PORT 8080
+int PORT = 8080;
 #define ROOMS_AMOUNT 25
 
 pthread_mutex_t room_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -133,6 +133,9 @@ void* handle_client(void* socket) {
 }
 
 int main(int argc, char const *argv[]) {
+    if (argc == 2) {
+        PORT = atoi(argv[1]);
+    }
     init_rooms();
     int server_fd, new_socket;
     struct sockaddr_in address;
