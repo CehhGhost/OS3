@@ -6,8 +6,8 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 
-#define SERVER_IP "127.0.0.1"
-#define PORT 8080
+char SERVER_IP[1024] = {0};
+int PORT = 8080;
 
 void print_menu() {
     printf("\nWhat do you want to do?\n");
@@ -105,6 +105,12 @@ void connect_to_server() {
 }
 
 int main(int argc, char const *argv[]) {
+    if (argc == 3) {
+        strcat(SERVER_IP, argv[1]);
+        PORT = atoi(argv[2]);
+    } else {
+        strcat(SERVER_IP, "127.0.0.1");
+    }
     connect_to_server();
     return 0;
 }
