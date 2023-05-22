@@ -27,7 +27,6 @@ struct room {
 struct room rooms[ROOMS_AMOUNT];
 
 void init_rooms() {
-    // Инициализация списка номеров гостиницы
     for (int i = 0; i < 10; i++) {
         rooms[i].id = i+1;
         rooms[i].price = 2000;
@@ -46,7 +45,6 @@ void init_rooms() {
 }
 
 void init_guest(struct guest *g, int id) {
-    // Случайная инициализация гостя
     srand(time(NULL));
     g->id = id;
     g->budget = rand() % 10000 + 1000;
@@ -62,7 +60,6 @@ void* handle_client(void* socket) {
 
     while (true) {
 	char buffer[1024] = {0};
-        // Обработка запросов гостя
         int msg_size = read(*socket_fd, buffer, 1024);
         if (msg_size <= 0) {
             printf("Guest %d disconnected\n", g.id);
@@ -70,7 +67,6 @@ void* handle_client(void* socket) {
             break;
         }
         if (strcmp(buffer, "get_available_rooms ") == 0) {
-            // Получение списка доступных номеров
             pthread_mutex_lock(&room_mutex);
             printf("Guest %d is looking for a room...\n", g.id);
             char response[1024] = {0};
@@ -88,7 +84,6 @@ void* handle_client(void* socket) {
             pthread_mutex_unlock(&room_mutex);
             write(*socket_fd, response, sizeof(response));
         } else if (strncmp(buffer, "book_room ", 10) == 0) {
-            // Бронирование номера
             pthread_mutex_lock(&room_mutex);
             int room_id = atoi(buffer + 10);
             if ((room_id < 1) || (room_id > ROOMS_AMOUNT)) {
@@ -113,7 +108,6 @@ void* handle_client(void* socket) {
                 write(*socket_fd, "room_booked", sizeof("room_booked"));
             }
         } else if (strcmp(buffer, "leave_hotel") == 0) {
-            // Освобождение номера
             pthread_mutex_lock(&room_mutex);
             int room_id = g.room_number;
             if (room_id == 0) {
@@ -128,7 +122,7 @@ void* handle_client(void* socket) {
             }
         }
     }
-    free(socket);  // deallocate the memory
+    free(socket);
     pthread_exit(NULL);
 }
 
@@ -148,24 +142,20 @@ int main(int argc, char const *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    // Установка опции переиспользования адреса
     if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt))) {
         perror("setsockopt failed");
         exit(EXIT_FAILURE);
     }
 
-    // Настройка адреса и порта сервера
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(PORT);
 
-    // Привязка сокета к адресу и порту
     if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0) {
         perror("bind failed");
         exit(EXIT_FAILURE);
     }
 
-    // Ожидание соединений
     if (listen(server_fd, 3) < 0) {
         perror("listen failed");
         exit(EXIT_FAILURE);
