@@ -168,7 +168,7 @@ int main(int argc, char const *argv[]) {
         int *new_socket_ptr = malloc(sizeof(int));
         if ((*new_socket_ptr = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen)) < 0) {
             perror("accept failed");
-            free(new_socket_ptr); // remember to deallocate the memory in case of failure
+            free(new_socket_ptr);
             exit(EXIT_FAILURE);
         }
         pthread_t pthread;
