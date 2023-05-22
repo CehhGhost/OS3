@@ -62,7 +62,7 @@ void* handle_client(void* socket) {
 	char buffer[1024] = {0};
         int msg_size = read(*socket_fd, buffer, 1024);
         if (msg_size <= 0) {
-            printf("Guest %d disconnected\n", g.id);
+            printf("Guest %d left room %d disconnected\n", g.id, g.room_number);
             pthread_mutex_unlock(&room_mutex);
             break;
         }
@@ -98,7 +98,7 @@ void* handle_client(void* socket) {
             } else {
                 if (g.room_number != 0) {
                     rooms[g.room_number - 1].is_free = true;
-                    printf("Guest %d left room %d and booking another\n", g.room_number - 1, room_id);
+                    printf("Guest %d left room %d and booking another\n", g.id, g.room_number);
                 }
                 rooms[room_id-1].is_free = false;
                 g.budget -= rooms[room_id-1].price;
