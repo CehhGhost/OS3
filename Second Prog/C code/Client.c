@@ -49,23 +49,19 @@ void connect_to_server() {
     int sock = 0;
     struct sockaddr_in serv_addr;
 
-    // Создание сокета
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         printf("\n Socket creation error \n");
         return;
     }
     
-    // Настройка адреса сервера
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(PORT);
     
-    // Преобразование IP адреса из текстового в бинарный формат
     if (inet_pton(AF_INET, SERVER_IP, &serv_addr.sin_addr) <= 0) {
         printf("\n Invalid address/ Address not supported \n");
         return;
     }
     
-    // Установка соединения с сервером
     if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
         printf("\n Connection Failed \n");
         return;
@@ -75,7 +71,6 @@ void connect_to_server() {
     sprintf(msg, "guest");
     send(sock, msg, sizeof(msg), 0);
     
-    // Обработка запросов гостя
     while (true) {
         char buffer[1024] = {0};
         print_menu();
