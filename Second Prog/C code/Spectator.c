@@ -12,23 +12,19 @@ void connect_to_server() {
     int sock = 0;
     struct sockaddr_in serv_addr;
 
-    // Creating socket
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         printf("\n Socket creation error \n");
         return;
     }
 
-    // Setting up server address
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(PORT);
 
-    // Convert IP address from text to binary form
     if (inet_pton(AF_INET, SERVER_IP, &serv_addr.sin_addr) <= 0) {
         printf("\n Invalid address/ Address not supported \n");
         return;
     }
 
-    // Connecting to server
     if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
         printf("\n Connection Failed \n");
         return;
@@ -38,7 +34,6 @@ void connect_to_server() {
     sprintf(msg, "spectator");
     send(sock, msg, sizeof(msg), 0);
 
-    // Listening for updates from the server
     while (1) {
         char buffer[1024] = {0};
         int msg_size = read(sock, buffer, 1024);
